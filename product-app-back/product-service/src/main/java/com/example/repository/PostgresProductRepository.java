@@ -30,7 +30,7 @@ public class PostgresProductRepository implements ProductRepository {
         this.jdbcTemplate = jdbcTemplae;
     }
 
-    @Value("${queries.product.getAll}")
+    @Value("${queries.product.get_all}")
     private String getAllQuery;
 
     @Override
