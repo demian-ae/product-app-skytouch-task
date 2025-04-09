@@ -21,6 +21,7 @@ public class PostgresProductRepository implements ProductRepository {
         @Override
         public Product mapRow(ResultSet rs, int rowNum) throws SQLException {
             return new Product(
+                    rs.getLong("id"), 
                     rs.getString("name"),
                     rs.getString("description"),
                     rs.getDouble("price"),

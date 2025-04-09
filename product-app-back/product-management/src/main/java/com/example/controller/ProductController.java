@@ -14,7 +14,7 @@ public class ProductController {
     
     @GetMapping
     public String hello() { 
-        Product p = new Product("Jabon", "Jabon para manos", 12.0, LocalDate.now());
+        Product p = new Product(1L, "Jabon", "Jabon para manos", 12.0, LocalDate.now());
         return p.toString();
     }
 
