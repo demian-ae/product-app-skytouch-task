@@ -24,3 +24,10 @@ rabbitmq:
     name: ${RABBITMQ_QUEUE}
   routing:
     key: ${RABBITMQ_ROUTING_KEY}
+
+queries:
+  product:
+    get_all: "SELECT * FROM products"
+    get_by_id: "SELECT * FROM products WHERE id = ?"
+    get_by_name: "SELECT * FROM products WHERE name = ?"
+    
