@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.common.ProductResponse;
 import com.example.producer.RabbitMQProducer;
 
 @RestController
@@ -17,8 +18,8 @@ public class MessageController {
     }
 
     @RequestMapping("/send")
-    public ResponseEntity<String> sendMessage(@RequestParam("message") String message) {
-        String response = rabbitMQProducer.sendMessage(message);
-        return ResponseEntity.ok("Response: " + response);
+    public ResponseEntity<ProductResponse> sendMessage(@RequestParam("message") String message) {
+        ProductResponse response = rabbitMQProducer.requestAllProducts();
+        return response != null ? ResponseEntity.ok(response) : ResponseEntity.notFound().build();
     }
 }
