@@ -18,7 +18,7 @@ public class MessageController {
 
     @RequestMapping("/send")
     public ResponseEntity<String> sendMessage(@RequestParam("message") String message) {
-        rabbitMQProducer.sendMessage(message);
-        return ResponseEntity.ok("Message sent to RabbitMQ: " + message);
+        String response = rabbitMQProducer.sendMessage(message);
+        return ResponseEntity.ok("Response: " + response);
     }
 }

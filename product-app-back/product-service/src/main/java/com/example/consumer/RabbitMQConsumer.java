@@ -11,7 +11,11 @@ public class RabbitMQConsumer {
 
 
     @RabbitListener(queues = "${rabbitmq.queue.name}")
-    public void consume(String message) { 
+    public String consume(String message) { 
         LOGGER.info("Message received -> " + message);
+
+        String result = "Message processed: " + message;
+
+        return result;
     }
 }
