@@ -8,19 +8,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.common.Product;
-import com.example.repository.PostgreSQLRepository;
+import com.example.repository.ProductRepository;
 
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
-    private final PostgreSQLRepository postgreSQLRepository;
+    private final ProductRepository productRepository;
 
-    public ProductController(PostgreSQLRepository repository) {
-        this.postgreSQLRepository = repository;
+    public ProductController(ProductRepository repository) {
+        this.productRepository = repository;
     }
 
     @GetMapping
     public ResponseEntity<List<Product>> findAll() {
-        return ResponseEntity.ok(postgreSQLRepository.findAll());
+        return ResponseEntity.ok(productRepository.findAll());
     }
 }
