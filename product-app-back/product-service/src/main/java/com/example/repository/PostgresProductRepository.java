@@ -44,7 +44,7 @@ public class PostgresProductRepository implements ProductRepository {
             return jdbcTemplate.query(getAllQuery, productRowMapper);
         } catch (DataAccessException e) {
             LOGGER.error("Error fetching products from database", e);
-            throw new RuntimeException("Error fetching products from database", e);
+            throw new RepositoryException("Error fetching products from database", e);
         }
     }
 }
