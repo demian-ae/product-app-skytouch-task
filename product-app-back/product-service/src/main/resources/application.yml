@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: product-management
+
+  rabbitmq:
+    host: rabbitmq-container
+    port: 5672
+    username: guest
+    password: guest
+
+  datasource:
+    url: jdbc:postgresql://postgres-container:5432/${DB_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+server:
+  port : 8081
+
+rabbitmq:
+  exchange:
+    name: ${RABBITMQ_EXCHANGE}
+  queue:
+    name: ${RABBITMQ_QUEUE}
+  routing:
+    key: ${RABBITMQ_ROUTING_KEY}
