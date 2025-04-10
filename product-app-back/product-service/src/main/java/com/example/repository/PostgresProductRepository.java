@@ -104,7 +104,7 @@ public class PostgresProductRepository implements ProductRepository {
     public void deleteById(Long id) { 
         try {
             LOGGER.info("Executing query: delete product with id: " + id);
-            jdbcTemplate.update("DELETE FROM products WHERE id = ?", id);
+            jdbcTemplate.update(deleteQuery, id);
         } catch (DataAccessException e) {
             LOGGER.error("Error deleting product from database", e);
             throw new RepositoryException("Error deleting product from database", e);
