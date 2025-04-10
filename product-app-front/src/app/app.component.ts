@@ -14,6 +14,7 @@ import { ProductService } from './product.service';
 })
 export class AppComponent {
   products: Product[] = []
+  currentProduct: Partial<Product> | null = null;
 
   constructor(private productService: ProductService) { 
     console.log('AppComponent constructor');
@@ -28,5 +29,17 @@ export class AppComponent {
       console.log("Data length: " + data.length);
       this.products = data; 
     })
+  }
+
+  addProduct = (product: Omit<Product, 'id'>) => {
+    this.productService.addProduct(product).subscribe({
+      next: (newProduct) => {
+        console.log('Product added:', newProduct);
+        this.getProducts();
+      },
+      error: (err) => {
+        console.error('Error adding product:', err);
+      }
+    });
   }
 }

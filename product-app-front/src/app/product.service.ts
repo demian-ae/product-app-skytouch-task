@@ -15,4 +15,8 @@ export class ProductService {
   getProducts(): Observable<Product[]> {
     return this.httpClient.get<Product[]>(this.baseUrl);
   }
+
+  addProduct(product: Omit<Product, 'id'>): Observable<Product> {
+    return this.httpClient.post<Product>(this.baseUrl, product);
+  }
 }
