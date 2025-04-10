@@ -48,4 +48,12 @@ public class RabbitMQProducer {
 
         return (ProductResponse) responese; 
     }
+
+    public void deleteProduct(Long productId) { 
+        ProductRequest request = new ProductRequest("DELETE", productId, null);
+        
+        LOGGER.info("Sending request to RabbitMQ: " + request.toString());
+
+        rabbitTemplate.convertAndSend(exchange, routuingKey, request);
+    }
 }
