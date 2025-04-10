@@ -1,5 +1,6 @@
 package com.example.repository;
 
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -46,6 +47,26 @@ public class PostgresProductRepository implements ProductRepository {
         } catch (DataAccessException e) {
             LOGGER.error("Error fetching products from database", e);
             throw new RepositoryException("Error fetching products from database", e);
+        }
+    }
+
+    @Value("${queries.product.create}")
+    private String createQuery; 
+
+    @Override
+    public void save(Product product) { 
+        try {
+            LOGGER.info("Executing query: insert product [{}]", product.getName());
+            jdbcTemplate.update(
+                createQuery,
+                product.getName(),
+                product.getDescription(),
+                product.getPrice(),
+                product.getExpirationDate() != null ? Date.valueOf(product.getExpirationDate()) : null // java.Date to sql.Date
+            );
+        } catch (DataAccessException e) {
+            LOGGER.error("Error inserting product into database", e);
+            throw new RepositoryException("Error inserting product into database", e);
         }
     }
 }
