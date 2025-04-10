@@ -12,11 +12,12 @@ export class ProductsListComponent {
   // mocke data
   products: Product[] = []
 
-  formatDate = (date: Date | null): string => {
+  formatDate = (date: string | Date | null): string => {
     if (date) {
-      const day = String(date.getDate()).padStart(2, '0');
-      const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-      const year = date.getFullYear();
+      const parsed = typeof date === 'string' ? new Date(date) : date;
+      const day = String(parsed.getDate()).padStart(2, '0');
+      const month = String(parsed.getMonth() + 1).padStart(2, '0');
+      const year = parsed.getFullYear();
       return `${day}/${month}/${year}`;
     }
     return '';
