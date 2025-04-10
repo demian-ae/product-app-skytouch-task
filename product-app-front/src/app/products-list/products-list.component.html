@@ -32,7 +32,7 @@
                         <td>{{ formatDate(product.expirationDate) }}</td>
                         <td>
                             <button class="btn btn-sm btn-warning me-2">Edit</button>
-                            <button class="btn btn-sm btn-danger">Delete</button>
+                            <button class="btn btn-sm btn-danger" (click)="deleteProduct(product.id)">Delete</button>
                         </td>
                     </tr>
                 }

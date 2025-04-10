@@ -10,6 +10,7 @@ import { Product } from '../product';
 export class ProductsListComponent {
   @Input() products: Product[] = [];
   @Input() reloadProucts: () => void = () => {};
+  @Input() deleteProduct: (id: number) => void = () => {};
 
   formatDate = (date: string | Date | null): string => {
     if (date) {

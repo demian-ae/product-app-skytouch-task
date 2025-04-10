@@ -42,4 +42,19 @@ export class AppComponent {
       }
     });
   }
+
+  // Handle delete
+  deleteProduct = (id: number) => {
+    if (confirm('Are you sure you want to delete this product?')) {
+      this.productService.deleteProduct(id).subscribe(
+        () => {
+          this.products = this.products.filter(product => product.id !== id);
+          this.getProducts();
+        },
+        (error) => {
+          console.error('Error deleting product:', error);
+        }
+      );
+    }
+  }
 }

@@ -19,4 +19,8 @@ export class ProductService {
   addProduct(product: Omit<Product, 'id'>): Observable<Product> {
     return this.httpClient.post<Product>(this.baseUrl, product);
   }
+
+  deleteProduct(id: number): Observable<void> {
+    return this.httpClient.delete<void>(`${this.baseUrl}/${id}`);
+  }
 }
