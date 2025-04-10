@@ -29,8 +29,8 @@ export class ProductFormComponent {
   onSubmit(event: Event): void {
     event.preventDefault();
 
-    if (!this.name || !this.description || this.price === null || !this.expirationDate) {
-      alert('Please fill in all fields before saving.');
+    if (!this.name || !this.description || this.price === null) {
+      alert('Please fill in all required fields before saving.');
       return;
     }
 
@@ -38,7 +38,7 @@ export class ProductFormComponent {
       name: this.name,
       description: this.description,
       price: this.price,
-      expirationDate: this.expirationDate,
+      expirationDate: this.expirationDate ? this.expirationDate : null,
     };
 
     this.addProduct(newProduct);
