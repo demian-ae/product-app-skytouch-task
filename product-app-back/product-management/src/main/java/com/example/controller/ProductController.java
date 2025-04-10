@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,4 +27,10 @@ public class ProductController {
         ProductResponse response = rabbitMQProducer.requestAllProducts();
         return response != null ? ResponseEntity.ok(response.getProducts()) : ResponseEntity.notFound().build();
     }
+
+    @PostMapping
+    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
+        ProductResponse response = rabbitMQProducer.createProduct(product);
+        return response != null ? ResponseEntity.ok(response.getProducts().get(0)) : ResponseEntity.internalServerError().build();
+    } 
 }

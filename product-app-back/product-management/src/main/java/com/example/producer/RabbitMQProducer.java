@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.example.common.Product;
 import com.example.common.ProductRequest;
 import com.example.common.ProductResponse;
 
@@ -29,12 +30,22 @@ public class RabbitMQProducer {
     }
 
     public ProductResponse requestAllProducts() { 
-        ProductRequest request = new ProductRequest("getAll", null);
+        ProductRequest request = new ProductRequest("GET_ALL", null, null);
         
-        LOGGER.info("Sending request to RabbitMQ: {}", request);
+        LOGGER.info("Sending request to RabbitMQ: ", request);
 
         Object response = rabbitTemplate.convertSendAndReceive(exchange, routuingKey, request);
 
         return (ProductResponse) response; 
+    }
+
+    public ProductResponse createProduct(Product product) { 
+        ProductRequest request = new ProductRequest("CREATE", null, product);
+        
+        LOGGER.info("Sending request to RabbitMQ: ", request);
+
+        Object responese = rabbitTemplate.convertSendAndReceive(exchange, routuingKey, request);
+
+        return (ProductResponse) responese; 
     }
 }

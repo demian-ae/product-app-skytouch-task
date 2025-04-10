@@ -1,9 +1,13 @@
 package com.example.repository;
 
 import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +15,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import com.example.common.Product;
@@ -22,14 +28,14 @@ public class PostgresProductRepository implements ProductRepository {
         @Override
         public Product mapRow(ResultSet rs, int rowNum) throws SQLException {
             return new Product(
-                    rs.getLong("id"), 
+                    rs.getLong("id"),
                     rs.getString("name"),
                     rs.getString("description"),
                     rs.getDouble("price"),
                     rs.getDate("expiration_date") != null ? rs.getDate("expiration_date").toLocalDate() : null);
         }
     };
-    
+
     private final JdbcTemplate jdbcTemplate;
 
     public PostgresProductRepository(JdbcTemplate jdbcTemplate) {
@@ -41,7 +47,7 @@ public class PostgresProductRepository implements ProductRepository {
 
     @Override
     public List<Product> findAll() {
-        try { 
+        try {
             LOGGER.info("Executing query: fetch all products");
             return jdbcTemplate.query(getAllQuery, productRowMapper);
         } catch (DataAccessException e) {
@@ -51,19 +57,41 @@ public class PostgresProductRepository implements ProductRepository {
     }
 
     @Value("${queries.product.create}")
-    private String createQuery; 
+    private String createQuery;
 
     @Override
-    public void save(Product product) { 
+    public Product save(Product product) {
         try {
-            LOGGER.info("Executing query: insert product [{}]", product.getName());
-            jdbcTemplate.update(
-                createQuery,
-                product.getName(),
-                product.getDescription(),
-                product.getPrice(),
-                product.getExpirationDate() != null ? Date.valueOf(product.getExpirationDate()) : null // java.Date to sql.Date
-            );
+            LOGGER.info("Executing query: insert product: " + product.getName());
+
+            KeyHolder keyHolder = new GeneratedKeyHolder();
+
+            jdbcTemplate.update(connection -> {
+                PreparedStatement ps = connection.prepareStatement(createQuery, Statement.RETURN_GENERATED_KEYS);
+                ps.setString(1, product.getName());
+                ps.setString(2, product.getDescription());
+                ps.setDouble(3, product.getPrice());
+                if (product.getExpirationDate() != null) {
+                    ps.setDate(4, Date.valueOf(product.getExpirationDate()));
+                } else {
+                    ps.setNull(4, Types.DATE);
+                }
+                return ps;
+            }, keyHolder);
+
+            // extract the generated ID and set it into the product
+            Map<String, Object> keys = keyHolder.getKeys();
+            if (keys != null && keys.containsKey("id")) {
+                Long generatedId = ((Number) keys.get("id")).longValue();
+                return new Product(
+                        generatedId,
+                        product.getName(),
+                        product.getDescription(),
+                        product.getPrice(),
+                        product.getExpirationDate());
+            } else {
+                return null; 
+            }
         } catch (DataAccessException e) {
             LOGGER.error("Error inserting product into database", e);
             throw new RepositoryException("Error inserting product into database", e);

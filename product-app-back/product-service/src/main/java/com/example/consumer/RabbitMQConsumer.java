@@ -27,11 +27,17 @@ public class RabbitMQConsumer {
     public ProductResponse consume(ProductRequest request) { 
         LOGGER.info("Message received -> " + request.toString());
 
-        if("getAll".equals(request.getAction())) { 
-            List<Product> products = productRepository.findAll();
-            return new ProductResponse(products);
+        switch (request.getAction()) {
+            case "GET_ALL":
+                List<Product> all = productRepository.findAll();
+                return new ProductResponse(all);
+    
+            case "CREATE":
+                Product created = productRepository.save(request.getProduct());
+                return new ProductResponse(created != null? List.of(created): Collections.emptyList());
+    
+            default:
+                throw new IllegalArgumentException("Unsupported request type: " + request.getAction());
         }
-
-        return new ProductResponse(Collections.emptyList());
     }
 }

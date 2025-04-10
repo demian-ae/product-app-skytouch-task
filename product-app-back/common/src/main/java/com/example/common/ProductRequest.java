@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductRequest {
-    private String action; // getAll, getById, create, update, delete
+    private String action; // GET_ALL, GET_BY_ID, CREATE, UPDATE, DELETE
     private Long productId;
+    private Product product;
 }
