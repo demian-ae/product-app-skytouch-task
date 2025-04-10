@@ -2,8 +2,6 @@ package com.example.repository;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.List;
@@ -24,17 +22,15 @@ import com.example.common.Product;
 @Repository
 public class PostgresProductRepository implements ProductRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProductRepository.class);
-    private final RowMapper<Product> productRowMapper = new RowMapper<Product>() {
-        @Override
-        public Product mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new Product(
+
+    private final RowMapper<Product> productRowMapper = (rs, rowNum) -> new Product(
                     rs.getLong("id"),
                     rs.getString("name"),
                     rs.getString("description"),
                     rs.getDouble("price"),
-                    rs.getDate("expiration_date") != null ? rs.getDate("expiration_date").toLocalDate() : null);
-        }
-    };
+                    rs.getDate("expiration_date") != null ? rs.getDate("expiration_date").toLocalDate() : null
+                );
+
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -48,7 +44,7 @@ public class PostgresProductRepository implements ProductRepository {
     @Override
     public List<Product> findAll() {
         try {
-            LOGGER.info("Executing query: fetch all products");
+            LOGGER.debug("Executing query: fetch all products");
             return jdbcTemplate.query(getAllQuery, productRowMapper);
         } catch (DataAccessException e) {
             LOGGER.error("Error fetching products from database", e);
@@ -107,7 +103,7 @@ public class PostgresProductRepository implements ProductRepository {
             jdbcTemplate.update(deleteQuery, id);
         } catch (DataAccessException e) {
             LOGGER.error("Error deleting product from database", e);
-            throw new RepositoryException("Error deleting product from database", e);
+            //throw new RepositoryException("Error deleting product from database", e);
         }
     }
 }

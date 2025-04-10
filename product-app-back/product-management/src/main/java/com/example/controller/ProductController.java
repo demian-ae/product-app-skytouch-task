@@ -14,26 +14,26 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.common.Product;
 import com.example.common.ProductResponse;
-import com.example.producer.RabbitMQProducer;
+import com.example.producer.ProductService;
 
 @RestController
 @RequestMapping("/api/v1/products")
 public class ProductController {
-    private RabbitMQProducer rabbitMQProducer;
+    private ProductService productService;
 
-    public ProductController(RabbitMQProducer rabbitMqProducer) {
-        this.rabbitMQProducer = rabbitMqProducer;
+    public ProductController(ProductService prouctService) {
+        this.productService = prouctService;
     }
 
     @GetMapping
     public ResponseEntity<List<Product>> getProducts() {
-        ProductResponse response = rabbitMQProducer.requestAllProducts();
+        ProductResponse response = productService.requestAllProducts();
         return response != null ? ResponseEntity.ok(response.getProducts()) : ResponseEntity.notFound().build();
     }
 
     @PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
-        ProductResponse response = rabbitMQProducer.createProduct(product);
+        ProductResponse response = productService.createProduct(product);
         return response != null 
             ? ResponseEntity.created(URI.create("/api/v1/products/" + response.getProducts().get(0).getId())).body(response.getProducts().get(0)) 
             : ResponseEntity.internalServerError().build();
@@ -41,7 +41,7 @@ public class ProductController {
 
     @DeleteMapping("/{productId}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long productId) {
-        rabbitMQProducer.deleteProduct(productId);
+        productService.deleteProduct(productId);
         return ResponseEntity.noContent().build();
     }
 }
