@@ -24,28 +24,19 @@
             </thead>
             <tbody>
                 <!-- Mock Data -->
-                <tr>
-                    <td>1</td>
-                    <td>Apple</td>
-                    <td>Fresh red apple</td>
-                    <td>1.20</td>
-                    <td>2025-06-01</td>
-                    <td>
-                        <button class="btn btn-sm btn-warning me-2">Edit</button>
-                        <button class="btn btn-sm btn-danger">Delete</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Bread</td>
-                    <td>Whole grain loaf</td>
-                    <td>2.50</td>
-                    <td>2025-04-15</td>
-                    <td>
-                        <button class="btn btn-sm btn-warning me-2">Edit</button>
-                        <button class="btn btn-sm btn-danger">Delete</button>
-                    </td>
-                </tr>
+                @for (product of products; track product.id) {
+                    <tr>
+                        <td>{{ product.id}}</td>
+                        <td>{{ product.name }}</td>
+                        <td>{{ product.description }}</td>
+                        <td>{{ product.price }}</td>
+                        <td>{{ formatDate(product.expirationDate) }}</td>
+                        <td>
+                            <button class="btn btn-sm btn-warning me-2">Edit</button>
+                            <button class="btn btn-sm btn-danger">Delete</button>
+                        </td>
+                    </tr>
+                }
 
             </tbody>
         </table>
