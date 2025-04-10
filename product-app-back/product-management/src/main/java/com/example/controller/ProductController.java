@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import java.net.URI;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,8 @@ public class ProductController {
     @PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
         ProductResponse response = rabbitMQProducer.createProduct(product);
-        return response != null ? ResponseEntity.ok(response.getProducts().get(0)) : ResponseEntity.internalServerError().build();
+        return response != null 
+            ? ResponseEntity.created(URI.create("/api/v1/products/" + response.getProducts().get(0).getId())).body(response.getProducts().get(0)) 
+            : ResponseEntity.internalServerError().build();
     } 
 }
