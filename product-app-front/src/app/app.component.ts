@@ -23,12 +23,10 @@ export class AppComponent {
     this.getProducts();
   }
 
-  private getProducts(): void {
+  getProducts = () => {
     this.productService.getProducts().subscribe(data => {
       console.log("Data length: " + data.length);
       this.products = data; 
     })
   }
-
-
 }

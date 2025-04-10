@@ -8,7 +8,8 @@ import { Product } from '../product';
   styleUrl: './products-list.component.css'
 })
 export class ProductsListComponent {
-  @Input() products: Product[] = []
+  @Input() products: Product[] = [];
+  @Input() reloadProucts: () => void = () => {};
 
   formatDate = (date: string | Date | null): string => {
     if (date) {
