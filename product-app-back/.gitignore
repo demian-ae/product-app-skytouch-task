@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### static resources ###
+*.html
+*.css
+*.js

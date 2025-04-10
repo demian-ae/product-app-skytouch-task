@@ -1,6 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Product } from '../product';
-import { ProductService } from '../product.service';
 
 @Component({
   selector: 'app-products-list',
@@ -9,8 +8,7 @@ import { ProductService } from '../product.service';
   styleUrl: './products-list.component.css'
 })
 export class ProductsListComponent {
-  // mocke data
-  products: Product[] = []
+  @Input() products: Product[] = []
 
   formatDate = (date: string | Date | null): string => {
     if (date) {
@@ -22,16 +20,7 @@ export class ProductsListComponent {
     }
     return '';
   }
-
-  constructor(private productService: ProductService) { }
-
-  ngOnInit(): void{ 
-    this.getProducts();
-  }
-
-  private getProducts(): void {
-    this.productService.getProducts().subscribe(data => {
-      this.products = data; 
-    })
+  constructor() {
+    console.log('ProductsListComponent constructor');
   }
 }
