@@ -1,4 +1,4 @@
-package com.example.producer;
+package com.example.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +11,7 @@ import com.example.common.ProductRequest;
 import com.example.common.ProductResponse;
 
 @Service
-public class RabbitMQProducer implements ProductService {
+public class ProductServiceRabbitMQImpl implements ProductService {
       
     @Value("${rabbitmq.exchange.name}")
     private String exchange;
@@ -19,11 +19,11 @@ public class RabbitMQProducer implements ProductService {
     @Value("${rabbitmq.routing.key}")
     private String routuingKey; 
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMQProducer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProductServiceRabbitMQImpl.class);
 
     private RabbitTemplate rabbitTemplate;
 
-    public RabbitMQProducer(RabbitTemplate rabbitTemplate) {
+    public ProductServiceRabbitMQImpl(RabbitTemplate rabbitTemplate) {
         this.rabbitTemplate = rabbitTemplate;
     }
 

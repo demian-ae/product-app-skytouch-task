@@ -1,4 +1,4 @@
-package com.example.producer;
+package com.example.service;
 
 import com.example.common.Product;
 import com.example.common.ProductResponse;
