@@ -3,8 +3,8 @@ spring:
     name: product-management
 
   rabbitmq:
-    host: rabbitmq-container
-    port: 5672
+    host: ${RABBITMQ_HOST}
+    port: ${RABBITMQ_PORT}
     username: guest
     password: guest
 
