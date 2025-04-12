@@ -22,6 +22,7 @@ import com.example.common.Product;
 @Repository
 public class PostgresProductRepository implements ProductRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(PostgresProductRepository.class);
+    private final ProductQueries productQueries;
 
     private final RowMapper<Product> productRowMapper = (rs, rowNum) -> new Product(
                     rs.getLong("id"),
@@ -34,26 +35,21 @@ public class PostgresProductRepository implements ProductRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public PostgresProductRepository(JdbcTemplate jdbcTemplate) {
+    public PostgresProductRepository(JdbcTemplate jdbcTemplate, ProductQueries productQueries) {
         this.jdbcTemplate = jdbcTemplate;
+        this.productQueries = productQueries;
     }
-
-    @Value("${queries.product.get_all}")
-    private String getAllQuery;
 
     @Override
     public List<Product> findAll() {
         try {
             LOGGER.debug("Executing query: fetch all products");
-            return jdbcTemplate.query(getAllQuery, productRowMapper);
+            return jdbcTemplate.query(productQueries.getGetAll(), productRowMapper);
         } catch (DataAccessException e) {
             LOGGER.error("Error fetching products from database", e);
             throw new RepositoryException("Error fetching products from database", e);
         }
     }
-
-    @Value("${queries.product.create}")
-    private String createQuery;
 
     @Override
     public Product save(Product product) {
@@ -63,7 +59,7 @@ public class PostgresProductRepository implements ProductRepository {
             KeyHolder keyHolder = new GeneratedKeyHolder();
 
             jdbcTemplate.update(connection -> {
-                PreparedStatement ps = connection.prepareStatement(createQuery, Statement.RETURN_GENERATED_KEYS);
+                PreparedStatement ps = connection.prepareStatement(productQueries.getCreate(), Statement.RETURN_GENERATED_KEYS);
                 ps.setString(1, product.getName());
                 ps.setString(2, product.getDescription());
                 ps.setDouble(3, product.getPrice());
@@ -94,13 +90,10 @@ public class PostgresProductRepository implements ProductRepository {
         }
     }
 
-    @Value("${queries.product.delete}")
-    private String deleteQuery; 
-
     public void deleteById(Long id) { 
         try {
             LOGGER.info("Executing query: delete product with id: {}", id);
-            jdbcTemplate.update(deleteQuery, id);
+            jdbcTemplate.update(productQueries.getDeleteById(), id);
         } catch (DataAccessException e) {
             LOGGER.error("Error deleting product from database", e);
             //throw new RepositoryException("Error deleting product from database", e);

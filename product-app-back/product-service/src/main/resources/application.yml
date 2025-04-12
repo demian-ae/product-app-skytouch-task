@@ -18,12 +18,9 @@ server:
   port : 8081
 
 rabbitmq:
-  exchange:
-    name: ${RABBITMQ_EXCHANGE}
-  queue:
-    name: ${RABBITMQ_QUEUE}
-  routing:
-    key: ${RABBITMQ_ROUTING_KEY}
+  exchange: ${RABBITMQ_EXCHANGE}
+  queue: ${RABBITMQ_QUEUE}
+  routing: ${RABBITMQ_ROUTING_KEY}
 
 queries:
   product:
@@ -31,5 +28,5 @@ queries:
     get_by_id: "SELECT * FROM product WHERE id = ?"
     get_by_name: "SELECT * FROM product WHERE name = ?"
     create: "INSERT INTO product (name, description, price, expiration_date) VALUES (?, ?, ?, ?)"
-    delete: "DELETE FROM product WHERE id = ?"
+    delete_by_id: "DELETE FROM product WHERE id = ?"
 

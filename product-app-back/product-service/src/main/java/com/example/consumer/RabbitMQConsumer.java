@@ -19,7 +19,7 @@ public class RabbitMQConsumer {
         this.productService = productService;
     }
 
-    @RabbitListener(queues = "${rabbitmq.queue.name}", ackMode = "AUTO")
+    @RabbitListener(queues = "${rabbitmq.queue}", ackMode = "AUTO")
     public ProductResponse consume(ProductRequest request) {
         LOGGER.info("Message received -> {}", request.toString());
         try {
