@@ -17,11 +17,11 @@ public class ProductServiceRabbitMQImpl implements ProductService {
     private String exchange;
 
     @Value("${rabbitmq.routing.key}")
-    private String routuingKey; 
+    private String routingKey;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProductServiceRabbitMQImpl.class);
 
-    private RabbitTemplate rabbitTemplate;
+    private final RabbitTemplate rabbitTemplate;
 
     public ProductServiceRabbitMQImpl(RabbitTemplate rabbitTemplate) {
         this.rabbitTemplate = rabbitTemplate;
@@ -31,29 +31,26 @@ public class ProductServiceRabbitMQImpl implements ProductService {
     public ProductResponse requestAllProducts() { 
         ProductRequest request = new ProductRequest("GET_ALL", null, null);
         
-        LOGGER.info("Sending request to RabbitMQ: {}", request);
+        LOGGER.info("Requesting all products. Sending request to RabbitMQ: {}", request);
 
-
-        return (ProductResponse) rabbitTemplate.convertSendAndReceive(exchange, routuingKey, request);
+        return (ProductResponse) rabbitTemplate.convertSendAndReceive(exchange, routingKey, request);
     }
 
     @Override
     public ProductResponse createProduct(Product product) { 
         ProductRequest request = new ProductRequest("CREATE", null, product);
         
-        LOGGER.info("Sending request to RabbitMQ: [{}]", request);
+        LOGGER.info("Creating a product. Sending request to RabbitMQ: {}", request);
 
-        Object responese = rabbitTemplate.convertSendAndReceive(exchange, routuingKey, request);
-
-        return (ProductResponse) responese; 
+        return (ProductResponse) rabbitTemplate.convertSendAndReceive(exchange, routingKey, request);
     }
 
     @Override
     public void deleteProduct(Long productId) { 
         ProductRequest request = new ProductRequest("DELETE", productId, null);
         
-        LOGGER.info("Sending request to RabbitMQ: " + request.toString());
+        LOGGER.info("Deleting a product. Sending request to RabbitMQ: {}", request);
 
-        rabbitTemplate.convertSendAndReceive(exchange, routuingKey, request);
+        rabbitTemplate.convertSendAndReceive(exchange, routingKey, request);
     }
 }
