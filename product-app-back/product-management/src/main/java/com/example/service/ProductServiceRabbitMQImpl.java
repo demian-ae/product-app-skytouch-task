@@ -54,6 +54,6 @@ public class ProductServiceRabbitMQImpl implements ProductService {
         
         LOGGER.info("Sending request to RabbitMQ: " + request.toString());
 
-        rabbitTemplate.convertAndSend(exchange, routuingKey, request);
+        rabbitTemplate.convertSendAndReceive(exchange, routuingKey, request);
     }
 }

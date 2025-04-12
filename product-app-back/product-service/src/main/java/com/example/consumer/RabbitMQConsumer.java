@@ -1,47 +1,32 @@
 package com.example.consumer;
 
-import java.util.Collections;
-import java.util.List;
-
+import com.example.service.ProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 
-import com.example.common.Product;
 import com.example.common.ProductRequest;
 import com.example.common.ProductResponse;
-import com.example.repository.ProductRepository;
 
 @Service
 public class RabbitMQConsumer {
     private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMQConsumer.class);
 
-    private final ProductRepository productRepository;
+    private final ProductService productService;
 
-    public RabbitMQConsumer(ProductRepository repository) {
-        this.productRepository = repository;
+    public RabbitMQConsumer(ProductService productService) {
+        this.productService = productService;
     }
 
-    @RabbitListener(queues = "${rabbitmq.queue.name}")
+    @RabbitListener(queues = "${rabbitmq.queue.name}", ackMode = "AUTO")
     public ProductResponse consume(ProductRequest request) {
-        LOGGER.info("Message received -> " + request.toString());
-
-        switch (request.getAction()) {
-            case "GET_ALL":
-                List<Product> all = productRepository.findAll();
-                return new ProductResponse(all);
-
-            case "CREATE":
-                Product created = productRepository.save(request.getProduct());
-                return new ProductResponse(created != null ? List.of(created) : Collections.emptyList());
-
-            case "DELETE":
-                productRepository.deleteById(request.getProductId());
-                return new ProductResponse(Collections.emptyList());
-
-            default:
-                throw new IllegalArgumentException("Unsupported request type: " + request.getAction());
+        LOGGER.info("Message received -> {}", request.toString());
+        try {
+            return productService.handleRequest(request);
+        } catch (Exception e) {
+            LOGGER.error("Error while getting the request", e);
+            throw e; // causing a negative ack
         }
     }
 }
