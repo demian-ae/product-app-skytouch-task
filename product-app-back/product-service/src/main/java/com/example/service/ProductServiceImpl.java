@@ -21,15 +21,15 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductResponse handleRequest(ProductRequest request) {
         switch (request.getAction()) {
-            case "GET_ALL":
+            case GET_ALL:
                 List<Product> all = findAll();
                 return new ProductResponse(all);
 
-            case "CREATE":
+            case CREATE:
                 Product created = save(request.getProduct());
                 return new ProductResponse(created != null ? List.of(created) : Collections.emptyList());
 
-            case "DELETE":
+            case DELETE_BY_ID:
                 deleteById(request.getProductId());
                 return new ProductResponse(Collections.emptyList());
 
