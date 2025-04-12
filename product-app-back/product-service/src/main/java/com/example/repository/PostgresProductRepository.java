@@ -21,7 +21,7 @@ import com.example.common.Product;
 
 @Repository
 public class PostgresProductRepository implements ProductRepository {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProductRepository.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PostgresProductRepository.class);
 
     private final RowMapper<Product> productRowMapper = (rs, rowNum) -> new Product(
                     rs.getLong("id"),
@@ -58,7 +58,7 @@ public class PostgresProductRepository implements ProductRepository {
     @Override
     public Product save(Product product) {
         try {
-            LOGGER.info("Executing query: insert product: " + product.getName());
+            LOGGER.info("Executing query: insert product {} ", product.getName());
 
             KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -99,7 +99,7 @@ public class PostgresProductRepository implements ProductRepository {
 
     public void deleteById(Long id) { 
         try {
-            LOGGER.info("Executing query: delete product with id: " + id);
+            LOGGER.info("Executing query: delete product with id: {}", id);
             jdbcTemplate.update(deleteQuery, id);
         } catch (DataAccessException e) {
             LOGGER.error("Error deleting product from database", e);
