@@ -52,4 +52,13 @@ public class ProductServiceRabbitMQImpl implements ProductService {
 
         rabbitTemplate.convertSendAndReceive(rabbitMQProperties.getExchange(), rabbitMQProperties.getRoutingKey(), request);
     }
+
+    @Override
+    public ProductResponse updateProduct(Long productId, Product product) {
+        ProductRequest request = new ProductRequest(ProductRequestAction.UPDATE_BY_ID, productId, product);
+
+        LOGGER.info("Updating a product with id {} and values: {}", productId, product);
+
+        return (ProductResponse) rabbitTemplate.convertSendAndReceive(rabbitMQProperties.getExchange(), rabbitMQProperties.getRoutingKey(), request);
+    }
 }

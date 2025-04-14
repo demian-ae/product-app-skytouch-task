@@ -13,4 +13,5 @@ public class ProductQueries {
     private String getByName;
     private String create;
     private String deleteById;
+    private String updateById;
 }

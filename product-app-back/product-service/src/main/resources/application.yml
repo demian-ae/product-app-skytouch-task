@@ -29,4 +29,5 @@ queries:
     get_by_name: "SELECT * FROM product WHERE name = ?"
     create: "INSERT INTO product (name, description, price, expiration_date) VALUES (?, ?, ?, ?)"
     delete_by_id: "DELETE FROM product WHERE id = ?"
+    update_by_id: "UPDATE product SET name = ?, description = ?, price = ?, expiration_date = ? WHERE id = ?"
 

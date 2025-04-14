@@ -33,6 +33,10 @@ public class ProductServiceImpl implements ProductService {
                 deleteById(request.getProductId());
                 return new ProductResponse(Collections.emptyList());
 
+            case UPDATE_BY_ID:
+                Product updated = updateById(request.getProductId(), request.getProduct());
+                return new ProductResponse(List.of(updated));
+
             default:
                 throw new IllegalArgumentException("Unsupported request type: " + request.getAction());
         }
@@ -50,7 +54,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product updateById(Long id, Product product) {
-        return null;
+        return productRepository.updateById(id, product);
     }
 
     @Override

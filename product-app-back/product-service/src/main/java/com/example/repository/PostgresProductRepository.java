@@ -19,6 +19,8 @@ import org.springframework.stereotype.Repository;
 
 import com.example.common.Product;
 
+import javax.xml.crypto.Data;
+
 @Repository
 public class PostgresProductRepository implements ProductRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(PostgresProductRepository.class);
@@ -90,13 +92,53 @@ public class PostgresProductRepository implements ProductRepository {
         }
     }
 
+    @Override
     public void deleteById(Long id) { 
         try {
             LOGGER.info("Executing query: delete product with id: {}", id);
             jdbcTemplate.update(productQueries.getDeleteById(), id);
         } catch (DataAccessException e) {
             LOGGER.error("Error deleting product from database", e);
-            //throw new RepositoryException("Error deleting product from database", e);
+            throw new RepositoryException("Error deleting product from database", e);
+        }
+    }
+
+    @Override
+    public Product updateById(Long id, Product product) {
+        try {
+            LOGGER.info("Executing query: update product by id: {}, product: {}", id, product);
+            KeyHolder keyHolder = new GeneratedKeyHolder();
+
+            jdbcTemplate.update(connection -> {
+                PreparedStatement ps = connection.prepareStatement(productQueries.getUpdateById(), Statement.RETURN_GENERATED_KEYS);
+                ps.setString(1, product.getName());
+                ps.setString(2, product.getDescription());
+                ps.setDouble(3, product.getPrice());
+                if (product.getExpirationDate() != null) {
+                    ps.setDate(4, Date.valueOf(product.getExpirationDate()));
+                } else {
+                    ps.setNull(4, Types.DATE);
+                }
+                ps.setLong(5,id);
+                return ps;
+            }, keyHolder);
+
+            // extract the generated ID and set it into the product
+            Map<String, Object> keys = keyHolder.getKeys();
+            if (keys != null && keys.containsKey("id")) {
+                Long generatedId = ((Number) keys.get("id")).longValue();
+                return new Product(
+                        generatedId,
+                        product.getName(),
+                        product.getDescription(),
+                        product.getPrice(),
+                        product.getExpirationDate());
+            } else {
+                return null;
+            }
+        } catch (DataAccessException e) {
+            LOGGER.error("Error inserting product into database", e);
+            throw new RepositoryException("Error inserting product into database", e);
         }
     }
 }
