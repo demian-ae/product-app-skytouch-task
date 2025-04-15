@@ -11,6 +11,7 @@ export class ProductsListComponent {
   @Input() products: Product[] = [];
   @Input() reloadProucts: () => void = () => {};
   @Input() deleteProduct: (id: number) => void = () => {};
+  @Input() setCurrentProduct: (product: Product) => void = () => {};
 
   formatDate = (date: string | Date | null): string => {
     if (date) {

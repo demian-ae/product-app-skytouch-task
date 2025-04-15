@@ -20,6 +20,10 @@ export class ProductService {
     return this.httpClient.post<Product>(this.baseUrl, product);
   }
 
+  editProduct(id: number, product: Product): Observable<Product> {
+    return this.httpClient.put<Product>(`${this.baseUrl}/${id}`, product);
+  }
+
   deleteProduct(id: number): Observable<void> {
     return this.httpClient.delete<void>(`${this.baseUrl}/${id}`);
   }

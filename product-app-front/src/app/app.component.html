@@ -1,8 +1,18 @@
 <section>
   <div class="container">
     <h1>Product App</h1>
-    <app-product-form [addProduct]="addProduct" [currentProduct]="currentProduct"/>
-    <app-products-list  [products]="products" [reloadProucts]="getProducts" [deleteProduct]="deleteProduct"/>
+    <app-product-form 
+      [currentProduct]="currentProduct" 
+      [addProduct]="addProduct" 
+      [cleanCurrentProduct]="cleanCurrentProduct"
+      [saveEditedProduct]="saveEditedProduct"  
+    />
+    <app-products-list  
+      [products]="products" 
+      [reloadProucts]="getProducts" 
+      [deleteProduct]="deleteProduct" 
+      [setCurrentProduct]="setCurrentProduct"
+    />
   </div>
 </section>
 

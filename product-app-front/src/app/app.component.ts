@@ -43,6 +43,26 @@ export class AppComponent {
     });
   }
 
+  setCurrentProduct = (product: Product) => {
+    this.currentProduct = product; 
+  }
+
+  cleanCurrentProduct = () => {
+    this.currentProduct = null;
+  }
+
+  saveEditedProduct = (product: Product) => {
+    this.productService.editProduct(product.id, product).subscribe({
+      next: (updatedProduct) => {
+        console.log('Product updated:', updatedProduct);
+        this.getProducts();
+      },
+      error: (err) => { 
+        console.error('Error updating product:', err); 
+      }
+    })
+  }
+
   // Handle delete
   deleteProduct = (id: number) => {
     if (confirm('Are you sure you want to delete this product?')) {
