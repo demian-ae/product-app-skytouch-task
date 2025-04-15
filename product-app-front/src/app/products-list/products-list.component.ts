@@ -14,15 +14,23 @@ export class ProductsListComponent {
   @Input() setCurrentProduct: (product: Product) => void = () => {};
 
   formatDate = (date: string | Date | null): string => {
-    if (date) {
-      const parsed = typeof date === 'string' ? new Date(date) : date;
-      const day = String(parsed.getDate()).padStart(2, '0');
-      const month = String(parsed.getMonth() + 1).padStart(2, '0');
-      const year = parsed.getFullYear();
+    if (!date) return '';
+  
+    let parsed: Date;
+    
+    // Spliting the date manually to avoid timezone shift
+    if (typeof date === 'string') {
+      const [year, month, day] = date.split('-');
       return `${day}/${month}/${year}`;
     }
-    return '';
+  
+    parsed = date;
+    const day = String(parsed.getDate()).padStart(2, '0');
+    const month = String(parsed.getMonth() + 1).padStart(2, '0'); // jan -> 0, feb -> 1 ...
+    const year = parsed.getFullYear();
+    return `${day}/${month}/${year}`;
   }
+
   constructor() {
     console.log('ProductsListComponent constructor');
   }
