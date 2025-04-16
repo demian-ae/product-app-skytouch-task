@@ -44,12 +44,12 @@ public class ProductServiceRabbitMQImpl implements ProductService {
     }
 
     @Override
-    public void deleteProduct(Long productId) { 
+    public ProductResponse deleteProduct(Long productId) {
         ProductRequest request = new ProductRequest(ProductRequestAction.DELETE_BY_ID, productId, null);
         
         LOGGER.info("Deleting a product. Sending request to RabbitMQ: {}", request);
 
-        rabbitTemplate.convertSendAndReceive(rabbitMQProperties.getExchange(), rabbitMQProperties.getRoutingKey(), request);
+       return (ProductResponse) rabbitTemplate.convertSendAndReceive(rabbitMQProperties.getExchange(), rabbitMQProperties.getRoutingKey(), request);
     }
 
     @Override

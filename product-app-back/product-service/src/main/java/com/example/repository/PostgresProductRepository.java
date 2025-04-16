@@ -53,7 +53,7 @@ public class PostgresProductRepository implements ProductRepository {
     public Product findById(Long id) {
         try {
             LOGGER.info("Executing query find by id");
-            List<Product> res = jdbcTemplate.query(productQueries.getUpdateById(), productRowMapper);
+            List<Product> res = jdbcTemplate.query(productQueries.getGetById(), productRowMapper, id);
             if(res.isEmpty()) return null;
             return res.get(0);
         } catch (DataAccessException e) {

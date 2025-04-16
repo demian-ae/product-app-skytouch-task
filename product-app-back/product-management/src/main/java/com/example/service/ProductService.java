@@ -9,7 +9,7 @@ public interface ProductService {
 
     ProductResponse createProduct(Product product);
 
-    void deleteProduct(Long productId);
+    ProductResponse deleteProduct(Long productId);
 
     ProductResponse updateProduct(Long productId, Product product);
 
