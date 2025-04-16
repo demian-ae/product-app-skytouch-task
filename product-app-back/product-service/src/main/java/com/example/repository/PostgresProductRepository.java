@@ -58,10 +58,12 @@ public class PostgresProductRepository implements ProductRepository {
         try {
             LOGGER.info("Executing query: insert product {} ", product.getName());
 
+            String query = productQueries.getCreate();
+
             KeyHolder keyHolder = new GeneratedKeyHolder();
 
             jdbcTemplate.update(connection -> {
-                PreparedStatement ps = connection.prepareStatement(productQueries.getCreate(), Statement.RETURN_GENERATED_KEYS);
+                PreparedStatement ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
                 ps.setString(1, product.getName());
                 ps.setString(2, product.getDescription());
                 ps.setDouble(3, product.getPrice());
@@ -107,10 +109,11 @@ public class PostgresProductRepository implements ProductRepository {
     public Product updateById(Long id, Product product) {
         try {
             LOGGER.info("Executing query: update product by id: {}, product: {}", id, product);
+            String query = productQueries.getUpdateById();
             KeyHolder keyHolder = new GeneratedKeyHolder();
 
             jdbcTemplate.update(connection -> {
-                PreparedStatement ps = connection.prepareStatement(productQueries.getUpdateById(), Statement.RETURN_GENERATED_KEYS);
+                PreparedStatement ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
                 ps.setString(1, product.getName());
                 ps.setString(2, product.getDescription());
                 ps.setDouble(3, product.getPrice());

@@ -20,6 +20,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductResponse handleRequest(ProductRequest request) {
+        if (request.getAction() == null) {
+            throw new IllegalArgumentException("ProductRequest action must not be null");
+        }
+
         switch (request.getAction()) {
             case GET_ALL:
                 List<Product> all = findAll();
