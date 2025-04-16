@@ -6,7 +6,8 @@ import com.example.common.Product;
 
 public interface ProductRepository {
     List<Product> findAll();
+    Product findById(Long id);
     Product save(Product product);
-    void deleteById(Long id);
+    boolean deleteById(Long id);
     Product updateById(Long id, Product product);
 }
