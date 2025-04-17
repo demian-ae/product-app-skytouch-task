@@ -15,6 +15,8 @@ import { ProductService } from './product.service';
 export class AppComponent {
   products: Product[] = []
   currentProduct: Partial<Product> | null = null;
+  errorMessage: string | null = null;
+  loading: boolean = false;
 
   constructor(private productService: ProductService) { 
     console.log('AppComponent constructor');
@@ -25,22 +27,37 @@ export class AppComponent {
   }
 
   getProducts = () => {
-    this.productService.getProducts().subscribe(data => {
-      console.log("Data length: " + data.length);
-      this.products = data; 
+    this.loading = true;
+    this.productService.getProducts().subscribe({
+      next: (data) => {
+        console.log("Data length: " + data.length);
+        this.products = data; 
+        this.errorMessage = null; 
+      },
+      error: (err) => {
+        const errorMsg = err.error?.message || 'An unexpected error occurred';
+        console.error('Error getting products:', errorMsg);
+        this.errorMessage = errorMsg;
+      }
     })
+    this.loading = false;
   }
 
   addProduct = (product: Omit<Product, 'id'>) => {
+    this.loading = true;
     this.productService.addProduct(product).subscribe({
       next: (newProduct) => {
         console.log('Product added:', newProduct);
         this.getProducts();
+        this.errorMessage = null;
       },
       error: (err) => {
-        console.error('Error adding product:', err);
-      }
+        const errorMsg = err.error?.message || 'An unexpected error occurred';
+        console.error('Error adding product:', errorMsg);
+        this.errorMessage = errorMsg;
+      },
     });
+    this.loading = false;
   }
 
   setCurrentProduct = (product: Product) => {
@@ -52,28 +69,40 @@ export class AppComponent {
   }
 
   saveEditedProduct = (product: Product) => {
+    this.loading = true;
     this.productService.editProduct(product.id, product).subscribe({
       next: (updatedProduct) => {
         console.log('Product updated:', updatedProduct);
         this.getProducts();
+        this.errorMessage = null;
       },
       error: (err) => { 
-        console.error('Error updating product:', err); 
+        const errorMsg = err.error?.message || 'An unexpected error occurred';
+        console.error('Error saving edited product:', errorMsg);
+        this.errorMessage = errorMsg;
       }
-    })
+    });
+    this.loading = false;
   }
 
   // Handle delete
   deleteProduct = (id: number) => {
     if (confirm('Are you sure you want to delete this product?')) {
+      this.loading = true;
       this.productService.deleteProduct(id).subscribe(
         () => {
           this.products = this.products.filter(product => product.id !== id);
           this.getProducts();
+          this.errorMessage = null;
+          this.loading = false;
         },
-        (error) => {
-          console.error('Error deleting product:', error);
-        }
+        (err) => {
+          const errorMsg = err.error?.message || 'An unexpected error occurred';
+          console.error('Error deleting product:', errorMsg);
+          this.errorMessage = errorMsg;
+          this.loading = false;
+        },
+
       );
     }
   }
