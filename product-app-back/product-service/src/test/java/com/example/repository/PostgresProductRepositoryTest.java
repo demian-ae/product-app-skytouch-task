@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
@@ -14,6 +15,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -57,20 +59,23 @@ class PostgresProductRepositoryTest {
         String query = "INSERT INTO products ...";
         when(productQueries.getCreate()).thenReturn(query);
 
-        GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
-        keyHolder.getKeyList().add(Map.of("id", 10L));
-
+        // Mock INSERT behavior
         doAnswer(invocation -> {
-            PreparedStatementCreator psc = invocation.getArgument(0);
             KeyHolder kh = invocation.getArgument(1);
-            kh.getKeyList().add(Map.of("id", 10L));
+            kh.getKeyList().add(Map.of("id", 10L)); // simulate DB returning generated ID
             return null;
         }).when(jdbcTemplate).update(any(PreparedStatementCreator.class), any(KeyHolder.class));
+
+        // Mock findById call after insertion
+        when(productQueries.getGetById()).thenReturn("SELECT * FROM products WHERE id = ?");
+        when(jdbcTemplate.query(eq("SELECT * FROM products WHERE id = ?"), any(RowMapper.class), eq(10L)))
+                .thenReturn(List.of(new Product(10L, "Test Product", "A product", 9.99, LocalDate.now())));
 
         Product result = repository.save(product);
 
         assertNotNull(result);
         assertEquals(10L, result.getId());
+        assertEquals("Test Product", result.getName());
     }
 
     @Test
@@ -88,18 +93,56 @@ class PostgresProductRepositoryTest {
         String query = "UPDATE products SET ...";
         when(productQueries.getUpdateById()).thenReturn(query);
 
-        GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
-        keyHolder.getKeyList().add(Map.of("id", 10L));
-
+        // Simulate successful update
         doAnswer(invocation -> {
             KeyHolder kh = invocation.getArgument(1);
             kh.getKeyList().add(Map.of("id", 10L));
-            return null;
+            return 1; // rows affected
         }).when(jdbcTemplate).update(any(PreparedStatementCreator.class), any(KeyHolder.class));
+
+        // Mock findById call after update
+        when(productQueries.getGetById()).thenReturn("SELECT * FROM products WHERE id = ?");
+        when(jdbcTemplate.query(eq("SELECT * FROM products WHERE id = ?"), any(RowMapper.class), eq(10L)))
+                .thenReturn(List.of(new Product(10L, "Updated Product", "Updated", 9.99, LocalDate.now())));
 
         Product result = repository.updateById(10L, product);
 
         assertNotNull(result);
         assertEquals(10L, result.getId());
+        assertEquals("Updated Product", result.getName());
+    }
+
+    @Test
+    void findById_shouldReturnProductWhenExists() {
+        String query = "SELECT * FROM products WHERE id = ?";
+        when(productQueries.getGetById()).thenReturn(query);
+        when(jdbcTemplate.query(eq(query), any(RowMapper.class), eq(1L))).thenReturn(List.of(product));
+
+        Product result = repository.findById(1L);
+
+        assertNotNull(result);
+        assertEquals(1L, result.getId());
+        assertEquals("Test Product", result.getName());
+    }
+
+    @Test
+    void findById_shouldReturnNullWhenNotFound() {
+        String query = "SELECT * FROM products WHERE id = ?";
+        when(productQueries.getGetById()).thenReturn(query);
+        when(jdbcTemplate.query(eq(query), any(RowMapper.class), eq(1L))).thenReturn(Collections.emptyList());
+
+        Product result = repository.findById(1L);
+
+        assertNull(result);
+    }
+
+    @Test
+    void findById_shouldThrowRepositoryExceptionOnDataAccessException() {
+        String query = "SELECT * FROM products WHERE id = ?";
+        when(productQueries.getGetById()).thenReturn(query);
+        when(jdbcTemplate.query(eq(query), any(RowMapper.class), eq(1L)))
+                .thenThrow(new DataAccessException("DB error") {});
+
+        assertThrows(RepositoryException.class, () -> repository.findById(1L));
     }
 }
