@@ -60,7 +60,7 @@ public class ProductServiceImpl implements ProductService {
                     throw new IllegalArgumentException("Unsupported request type: " + request.getAction());
             }
         } catch (RepositoryException e) {
-            LOGGER.error("Repository error", e);
+            LOGGER.error("Repository error from the service", e);
             return new ProductResponse(ProductResponseStatus.INTERNAL_SERVER_ERROR, Collections.emptyList());
         } catch (Exception e) {
             LOGGER.error("Unexpected error", e);

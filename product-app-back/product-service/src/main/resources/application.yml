@@ -13,6 +13,10 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 3000        # Fail DB connection after 5 seconds
+      validation-timeout: 3000        # Timeout for validation checks
+      login-timeout: 3                # Seconds to wait during login (JDBC)
 
 server:
   port : 8081
