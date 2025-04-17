@@ -10,17 +10,17 @@
                 <input type="text" id="id" class="form-control" [value]="currentProduct?.id || ''" disabled />
             </div>
             <div class="col-md-2">
-                <label for="name" class="form-label">Name</label>
+                <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
                 <input type="text" id="name" [(ngModel)]="name" name="name" class="form-control"
                     placeholder="Product Name" />
             </div>
             <div class="col-md-3">
-                <label for="description" class="form-label">Description</label>
+                <label for="description" class="form-label">Description <span class="text-danger">*</span></label>
                 <input type="text" id="description" [(ngModel)]="description" name="description" class="form-control"
                     placeholder="Short Description" />
             </div>
             <div class="col-md-2">
-                <label for="price" class="form-label">Price ($)</label>
+                <label for="price" class="form-label">Price ($) <span class="text-danger">*</span></label>
                 <input type="number" id="price" [(ngModel)]="price" name="price" class="form-control"
                     placeholder="0.00" />
             </div>
@@ -36,5 +36,8 @@
                 <button type="submit" class="btn btn-primary w-100">Save</button>
             </div>
         </form>
+        <div class="mt-2 d-flex justify-content-end">
+            <span class="text-danger" style="font-size: 12px;">* required values</span>
+        </div>
     </div>
 </div>

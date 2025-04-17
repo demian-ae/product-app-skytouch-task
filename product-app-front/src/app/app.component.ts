@@ -33,14 +33,19 @@ export class AppComponent {
         console.log("Data length: " + data.length);
         this.products = data; 
         this.errorMessage = null; 
+        this.loading = false;
       },
       error: (err) => {
+        if (err.status === 0) {
+          this.errorMessage = 'Cannot connect to the server. Please try again later.';
+          return;
+        }
         const errorMsg = err.error?.message || 'An unexpected error occurred';
         console.error('Error getting products:', errorMsg);
         this.errorMessage = errorMsg;
+        this.loading = false;
       }
     })
-    this.loading = false;
   }
 
   addProduct = (product: Omit<Product, 'id'>) => {
@@ -50,14 +55,19 @@ export class AppComponent {
         console.log('Product added:', newProduct);
         this.getProducts();
         this.errorMessage = null;
+        this.loading = false;
       },
       error: (err) => {
+        if (err.status === 0) {
+          this.errorMessage = 'Cannot connect to the server. Please try again later.';
+          return;
+        }
         const errorMsg = err.error?.message || 'An unexpected error occurred';
         console.error('Error adding product:', errorMsg);
         this.errorMessage = errorMsg;
+        this.loading = false;
       },
     });
-    this.loading = false;
   }
 
   setCurrentProduct = (product: Product) => {
@@ -75,14 +85,19 @@ export class AppComponent {
         console.log('Product updated:', updatedProduct);
         this.getProducts();
         this.errorMessage = null;
+        this.loading = false;
       },
       error: (err) => { 
+        if (err.status === 0) {
+          this.errorMessage = 'Cannot connect to the server. Please try again later.';
+          return;
+        }
         const errorMsg = err.error?.message || 'An unexpected error occurred';
         console.error('Error saving edited product:', errorMsg);
         this.errorMessage = errorMsg;
+        this.loading = false;
       }
     });
-    this.loading = false;
   }
 
   // Handle delete
@@ -97,6 +112,10 @@ export class AppComponent {
           this.loading = false;
         },
         (err) => {
+          if (err.status === 0) {
+            this.errorMessage = 'Cannot connect to the server. Please try again later.';
+            return;
+          }
           const errorMsg = err.error?.message || 'An unexpected error occurred';
           console.error('Error deleting product:', errorMsg);
           this.errorMessage = errorMsg;
