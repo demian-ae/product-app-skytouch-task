@@ -84,6 +84,6 @@ describe('AppComponent', () => {
     spyOn(console, 'error');
     component.addProduct(product);
 
-    expect(console.error).toHaveBeenCalledWith('Error adding product:', jasmine.any(Error));
+    expect(console.error).toHaveBeenCalledWith('Error adding product:', jasmine.any(String));
   });
 });

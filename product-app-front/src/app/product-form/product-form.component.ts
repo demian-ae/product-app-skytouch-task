@@ -40,11 +40,11 @@ export class ProductFormComponent {
   onSubmit(event: Event): void {
     event.preventDefault();
 
-    if (!this.name || !this.description || this.price === null) {
+    if (!this.name || !this.description || this.price === null || this.price < 0) {
       alert('Please fill in all required fields before saving.');
       return;
     }
-
+    
     if(this.currentProduct?.id) {
       const updatedProduct: Product = {
         id: this.currentProduct.id,

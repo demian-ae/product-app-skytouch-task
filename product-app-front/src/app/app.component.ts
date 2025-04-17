@@ -38,6 +38,7 @@ export class AppComponent {
       error: (err) => {
         if (err.status === 0) {
           this.errorMessage = 'Cannot connect to the server. Please try again later.';
+          this.loading = false;
           return;
         }
         const errorMsg = err.error?.message || 'An unexpected error occurred';
@@ -60,6 +61,7 @@ export class AppComponent {
       error: (err) => {
         if (err.status === 0) {
           this.errorMessage = 'Cannot connect to the server. Please try again later.';
+          this.loading = false;
           return;
         }
         const errorMsg = err.error?.message || 'An unexpected error occurred';
@@ -90,6 +92,7 @@ export class AppComponent {
       error: (err) => { 
         if (err.status === 0) {
           this.errorMessage = 'Cannot connect to the server. Please try again later.';
+          this.loading = false;
           return;
         }
         const errorMsg = err.error?.message || 'An unexpected error occurred';
@@ -114,6 +117,7 @@ export class AppComponent {
         (err) => {
           if (err.status === 0) {
             this.errorMessage = 'Cannot connect to the server. Please try again later.';
+            this.loading = false;
             return;
           }
           const errorMsg = err.error?.message || 'An unexpected error occurred';
