@@ -25,6 +25,21 @@ public class ProductServiceRabbitMQImpl implements ProductService {
         this.rabbitMQProperties = rabbitMQProperties;
     }
 
+    private void validateProduct(Product product) {
+        if (product == null) {
+            throw new InvalidProductException("Product cannot be null");
+        }
+        if (product.getName() == null || product.getName().trim().isEmpty()) {
+            throw new InvalidProductException("Product name must not be empty");
+        }
+        if (product.getDescription() == null || product.getDescription().trim().isEmpty()) {
+            throw new InvalidProductException("Product description must not be empty");
+        }
+        if (product.getPrice() <= 0) {
+            throw new InvalidProductException("Product price must be greater than zero");
+        }
+    }
+
     @Override
     public ProductResponse requestAllProducts() { 
         ProductRequest request = new ProductRequest(ProductRequestAction.GET_ALL, null, null);
@@ -35,7 +50,9 @@ public class ProductServiceRabbitMQImpl implements ProductService {
     }
 
     @Override
-    public ProductResponse createProduct(Product product) { 
+    public ProductResponse createProduct(Product product) {
+        validateProduct(product);
+
         ProductRequest request = new ProductRequest(ProductRequestAction.CREATE, null, product);
         
         LOGGER.info("Creating a product. Sending request to RabbitMQ: {}", request);
@@ -54,6 +71,8 @@ public class ProductServiceRabbitMQImpl implements ProductService {
 
     @Override
     public ProductResponse updateProduct(Long productId, Product product) {
+        validateProduct(product);
+
         ProductRequest request = new ProductRequest(ProductRequestAction.UPDATE_BY_ID, productId, product);
 
         LOGGER.info("Updating a product with id {} and values: {}", productId, product);

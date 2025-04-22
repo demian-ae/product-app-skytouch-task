@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import com.example.dto.ErrorResponse;
+import com.example.service.InvalidProductException;
 import com.example.service.ResourceNotFoundException;
 import com.example.service.ServiceUnavailableException;
 import org.slf4j.Logger;
@@ -34,6 +35,13 @@ public class GlobalExceptionHandler {
         LOGGER.error("error reaching rabbit mq", ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorResponse("Cannot connect to queue"));
+    }
+
+    @ExceptionHandler(InvalidProductException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidProductException(Exception ex) {
+        LOGGER.error("error reaching rabbit mq", ex);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(ex.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)
