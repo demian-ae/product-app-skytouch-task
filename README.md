@@ -86,10 +86,9 @@ This allows Spring Boot to serve the frontend as static content.
 In the `product-app-back` :
 ```bash
 mvn clean package
-podman-compose build product-management
 ```
 
-Then run the two spring boot applications. 
+Then, **run the two spring boot applications.** 
 
 ## Access the app
 The app will be available at `localhost:8080`
