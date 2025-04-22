@@ -1,5 +1,12 @@
 # Use the official RabbitMQ image
 FROM rabbitmq:management
 
-# Expose ports
-EXPOSE 5672 15672
+ENV RABBITMQ_PORT=5672
+ENV RABBITMQ_MANAGEMENT_PORT=15672
+
+COPY configure-rabbitmq.sh /usr/local/bin/configure-rabbitmq.sh
+RUN chmod +x /usr/local/bin/configure-rabbitmq.sh
+
+EXPOSE ${RABBITMQ_PORT} ${RABBITMQ_MANAGEMENT_PORT}
+
+ENTRYPOINT ["/usr/local/bin/configure-rabbitmq.sh"]

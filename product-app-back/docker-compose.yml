@@ -20,6 +20,9 @@ services:
       context: .
       dockerfile: Dockerfile-rabbitmq
     container_name: rabbitmq-container
+    environment:
+      RABBITMQ_PORT: ${RABBITMQ_PORT}
+      RABBITMQ_MANAGEMENT_PORT: ${RABBITMQ_MANAGEMENT_PORT}
     ports:
       - "${RABBITMQ_PORT}:${RABBITMQ_PORT}"
       - "${RABBITMQ_MANAGEMENT_PORT}:${RABBITMQ_MANAGEMENT_PORT}"
