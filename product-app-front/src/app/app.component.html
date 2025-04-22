@@ -1,6 +1,33 @@
 <section>
-  <h1>Product App</h1>
-
+  <div class="container">
+    <h1>Product App</h1>
+    
+    <app-product-form 
+      [currentProduct]="currentProduct" 
+      [addProduct]="addProduct" 
+      [cleanCurrentProduct]="cleanCurrentProduct"
+      [saveEditedProduct]="saveEditedProduct"  
+    />
+    @if(loading) { 
+      <div class="loading-overlay">
+        <div class="spinner"></div>
+      </div>
+    }
+    @if(errorMessage) {
+      <div class="d-flex justify-content-center gap-4 mb-4">
+        {{ errorMessage }}
+        <button class="btn btn-outline-danger" (click)="getProducts()">Retry</button>
+      </div>
+    } @else {
+      <app-products-list  
+        [products]="products" 
+        [reloadProucts]="getProducts" 
+        [deleteProduct]="deleteProduct" 
+        [setCurrentProduct]="setCurrentProduct"
+      />
+    }
+    
+  </div>
 </section>
 
 <router-outlet />

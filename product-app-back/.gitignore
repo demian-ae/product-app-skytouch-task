@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### static resources ###
+product-management/src/main/resources/static/

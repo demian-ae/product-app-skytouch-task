@@ -2,37 +2,61 @@ package com.example.config;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.TopicExchange;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+@Configuration
 public class RabbitMQConfig {
-    @Value("${rabbitmq.queue.name}")
-    private String queue;
+    private final RabbitMQProperties rabbitMQProperties;
 
-    @Value("${rabbitmq.exchange.name}")
-    private String exchange;
-
-    @Value("${rabbitmq.routing.key}")
-    private String routingKey; 
-
-    @Bean
-    public Queue queue() { 
-        return new Queue(queue);
+    public RabbitMQConfig(RabbitMQProperties rabbitMQProperties) {
+        this.rabbitMQProperties = rabbitMQProperties;
     }
 
     @Bean
-    public TopicExchange topicExchange() { 
-        return new TopicExchange(exchange);
+    public Queue queue() { 
+        return new Queue(rabbitMQProperties.getQueue());
+    }
+
+    @Bean
+    public DirectExchange directExchange() { 
+        return new DirectExchange(rabbitMQProperties.getExchange());
     }
 
     @Bean
     public Binding binding(){
         return BindingBuilder
             .bind(queue())
-            .to(topicExchange())
-            .with(routingKey);
+            .to(directExchange())
+            .with(rabbitMQProperties.getRoutingKey());
+    }
+
+    @Bean
+    public MessageConverter jsonMessageConverter() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        // Register the JavaTimeModule to handle Java 8 date/time types
+        objectMapper.registerModule(new JavaTimeModule());
+
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        return new Jackson2JsonMessageConverter(objectMapper);
+    }
+
+    @Bean
+    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) { 
+        RabbitTemplate template = new RabbitTemplate(connectionFactory);
+        template.setMessageConverter(jsonMessageConverter());
+        return template; 
     }
 
     /*

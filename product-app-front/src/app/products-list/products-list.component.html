@@ -1,0 +1,43 @@
+<!-- Product List -->
+<div class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-md-6">
+                <h5>Product List</h5>
+            </div>
+            <div class="col-md-6 text-end">
+                <button class="btn btn-light" (click)="reloadProucts()">Reload</button>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Price ($)</th>
+                    <th>Expiration</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (product of products; track product.id) {
+                    <tr>
+                        <td>{{ product.id}}</td>
+                        <td>{{ product.name }}</td>
+                        <td>{{ product.description }}</td>
+                        <td>{{ product.price | number:'1.2-2' }}</td>
+                        <td>{{ formatDate(product.expirationDate) }}</td>
+                        <td>
+                            <button class="btn btn-sm btn-warning me-2" (click)="setCurrentProduct(product)">Edit</button>
+                            <button class="btn btn-sm btn-danger" (click)="deleteProduct(product.id)">Delete</button>
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>
