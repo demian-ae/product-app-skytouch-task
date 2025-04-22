@@ -1,34 +1,4 @@
-version: "3.8"
 services:
-  product-management:
-    build:
-      context: ./product-management
-    container_name: product-management
-    ports:
-      - "8080:8080"
-    environment:
-      RABBITMQ_EXCHANGE: ${RABBITMQ_EXCHANGE}
-      RABBITMQ_QUEUE: ${RABBITMQ_QUEUE}
-      RABBITMQ_ROUTING_KEY: ${RABBITMQ_ROUTING_KEY} 
-    depends_on:
-      - rabbitmq
-
-  product-service:
-    build:
-      context: ./product-service
-    container_name: product-service
-    ports:
-      - "8081:8081"
-    environment:
-      DB_NAME: ${DB_NAME}
-      DB_USERNAME: ${DB_USERNAME}
-      DB_PASSWORD: ${DB_PASSWORD}
-      RABBITMQ_EXCHANGE: ${RABBITMQ_EXCHANGE}
-      RABBITMQ_QUEUE: ${RABBITMQ_QUEUE}
-      RABBITMQ_ROUTING_KEY: ${RABBITMQ_ROUTING_KEY} 
-    depends_on:
-      - db
-      - rabbitmq
   db:
     build:
       context: .
@@ -38,8 +8,9 @@ services:
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
+      PGPORT: ${DB_PORT}
     ports:
-      - "5432:5432"
+      - "${DB_PORT}:${DB_PORT}"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -50,8 +21,8 @@ services:
       dockerfile: Dockerfile-rabbitmq
     container_name: rabbitmq-container
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - "${RABBITMQ_PORT}:${RABBITMQ_PORT}"
+      - "${RABBITMQ_MANAGEMENT_PORT}:${RABBITMQ_MANAGEMENT_PORT}"
 
 volumes:
   postgres_data:
