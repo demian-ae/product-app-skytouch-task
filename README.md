@@ -35,10 +35,15 @@ cd product-app-skytouch-task
 Inside the product-app-back, edit the .env file with your desired config:
 
 ```dotenv 
+DB_HOST=localhost
+DB_PORT=5433
 DB_NAME=product_app
 DB_USERNAME=postgres
 DB_PASSWORD=12345
 
+RABBITMQ_HOST=localhost
+RABBITMQ_PORT=5673
+RABBITMQ_MANAGEMENT_PORT=15673
 RABBITMQ_EXCHANGE=product_exchange
 RABBITMQ_QUEUE=product_queue
 RABBITMQ_ROUTING_KEY=product_routing_key
@@ -60,12 +65,6 @@ Inside the product-app-back, use `podman-compose` or `docker-compose`:
 podman-compose up -d
 ```
 
-### 5. Set up RabbitMQ
-Ingress to the RabbitMQ Management app through `localhost:15672`, the default user and password is `guest`. 
-Using the values in the `.env` file, create the **exchange**, **queue** and bind the exchange to the queue with the **routing key**. 
-
-Restart `product-management` and `product-service` containers. 
-
 ## Frontend
 
 ### 1. Build the Angular front end
@@ -83,18 +82,14 @@ cp -r dist/product-app-front/browser/* ../product-app-back/product-management/sr
 ```
 This allows Spring Boot to serve the frontend as static content.
 
-### 3. Build the backend 
+### 3. Run the backend 
 In the `product-app-back` :
 ```bash
 mvn clean package
 podman-compose build product-management
 ```
 
-### 4. Run the container
-
-```bash 
-podman-compose up -d product-management
-```
+Then run the two spring boot applications. 
 
 ## Access the app
 The app will be available at `localhost:8080`
